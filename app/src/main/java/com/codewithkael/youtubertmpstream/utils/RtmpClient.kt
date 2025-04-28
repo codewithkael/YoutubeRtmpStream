@@ -8,6 +8,7 @@ import com.haishinkit.event.IEventListener
 import com.haishinkit.media.AudioRecordSource
 import com.haishinkit.media.AudioSource
 import com.haishinkit.media.Camera2Source
+import com.haishinkit.media.Stream
 import com.haishinkit.rtmp.RtmpConnection
 import com.haishinkit.rtmp.RtmpStream
 import com.haishinkit.view.HkSurfaceView
@@ -41,7 +42,7 @@ class RtmpClient(
 
     }
 
-    fun start(streamName:String) {
+    fun start(streamName:String, onStreamStarted:(Stream)->Unit) {
         //you can set custom configs here using init function
         stream.audioSetting.bitRate = 128 * 1000  // Set audio bitrate to 128 kbps
         stream.videoSetting.width = 1280  // 1280x720 resolution
@@ -49,7 +50,7 @@ class RtmpClient(
         stream.videoSetting.bitRate = 4000000 // 4 Mbps video bitrate
         connection.connect("rtmp://a.rtmp.youtube.com/live2")
         stream.publish(streamName)
-
+        onStreamStarted.invoke(stream)
     }
 
     fun stop() {

@@ -10,7 +10,6 @@ import androidx.activity.compose.rememberLauncherForActivityResult
 import androidx.activity.compose.setContent
 import androidx.activity.result.contract.ActivityResultContracts
 import androidx.compose.foundation.layout.*
-import androidx.compose.foundation.text.BasicTextField
 import androidx.compose.material3.*
 import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
@@ -20,6 +19,7 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.viewinterop.AndroidView
 import com.codewithkael.youtubertmpstream.service.RtmpService
 import com.codewithkael.youtubertmpstream.service.RtmpServiceRepository
+import com.haishinkit.compose.HaishinKitView
 import dagger.hilt.android.AndroidEntryPoint
 import javax.inject.Inject
 
@@ -156,12 +156,7 @@ class MainActivity : ComponentActivity(), RtmpService.Listener {
             Spacer(modifier = Modifier.height(16.dp))
 
             if (isStreaming) {
-//                AndroidView(
-//                    factory = { RtmpService.surfaceView!! },
-//                    modifier = Modifier
-//                        .fillMaxWidth()
-//                        .weight(1f)
-//                )
+                RtmpService.localStream?.let { HaishinKitView(stream = it) }
             }
         }
     }

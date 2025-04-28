@@ -9,6 +9,7 @@ import android.os.IBinder
 import androidx.core.app.NotificationCompat
 import com.codewithkael.youtubertmpstream.R
 import com.codewithkael.youtubertmpstream.utils.RtmpClient
+import com.haishinkit.media.Stream
 import com.haishinkit.view.HkSurfaceView
 
 class RtmpService : Service(), RtmpClient.Listener {
@@ -19,6 +20,7 @@ class RtmpService : Service(), RtmpClient.Listener {
         var isStreamOn = false
         var listener: Listener? = null
         var currentUrl = ""
+        var localStream: Stream? = null
     }
 
     //notification section
@@ -53,12 +55,14 @@ class RtmpService : Service(), RtmpClient.Listener {
 
 
     private fun handleStartService(intent: Intent) {
-        if (!isServiceRunning){
+        if (!isServiceRunning) {
             isServiceRunning = true
             val url = intent.getStringExtra("url")
             url?.let {
                 currentUrl = it
-                rtmpClient?.start(it)
+                rtmpClient?.start(it) { stream: Stream ->
+                    localStream = stream
+                }
                 startServiceWithNotification()
             }
         }
@@ -67,15 +71,12 @@ class RtmpService : Service(), RtmpClient.Listener {
 
 
     private fun handleStopService() {
-        startServiceWithNotification()
+        stopForeground(STOP_FOREGROUND_REMOVE)
         isServiceRunning = false
         isStreamOn = false
         rtmpClient?.stop()
 //        surfaceView?.dispose()
         surfaceView = null
-        stopSelf()
-        notificationManager.cancelAll()
-
     }
 
     private fun handleSwitchCamera() {
